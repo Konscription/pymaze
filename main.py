@@ -36,6 +36,8 @@ def main():
     ]
     for cell in cells:
         cell.draw()
+    cells[0].draw_move(cells[1])
+    cells[3].draw_move(cells[4],True)
     win.wait_for_close()
     
 main()

@@ -15,7 +15,9 @@ class Cell:
         self._sqp2 = sqp2
         self._win = win
         
-    def draw(self):       
+    def draw(self):
+        if self._win is None:
+            return     
         if self.walls.left_wall:
             line = Line(self._sqp1,Point(self._sqp1.x,self._sqp2.y))
             self._win.draw_line(line)
@@ -29,3 +31,20 @@ class Cell:
             line = Line(Point(self._sqp1.x,self._sqp2.y),self._sqp2)
             self._win.draw_line(line)
 
+    def draw_move(self,to_cell, undo=False):
+        half_length = abs(self._sqp2.x - self._sqp1.x) // 2
+        midpoint = Point(
+            self._sqp1.x + half_length, 
+            self._sqp1.y + half_length
+        )
+        to_half_length = abs(to_cell._sqp2.x - to_cell._sqp1.x) // 2
+        to_midpoint = Point(
+            to_cell._sqp1.x + to_half_length, 
+            to_cell._sqp1.y + to_half_length
+        )
+        fill_color = "red"
+        if undo:
+            fill_color = "grey"
+        line = Line(midpoint,to_midpoint)
+        self._win.draw_line(line, fill_color)
+        
