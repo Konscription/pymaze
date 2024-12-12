@@ -1,36 +1,41 @@
-from graphics import Window , Point, Line, Cell, Walls
-
+from graphics import Window , Point, Line
+from cell import Cell, Walls
 def main():
     win = Window(800,800)
     cells = [
         Cell(
-            Walls(False,False,False,False),
-            1,1,
-            50,50
+            win,
+            Point(1,1),
+            Point(50,50),
+            walls=Walls(False,False,False,False)
         ),
         Cell(
-            Walls(False,False,False,True),
-            50,1,
-            100,50
+            win,
+            Point(50,1),
+            Point(100,50),
+            walls=Walls(False,False,False,True)
         ),
         Cell(
-            Walls(False,False,True,False),
-            100,1,
-            150,50
+            win,         
+            Point(100,1),
+            Point(150,50),
+            walls=Walls(False,False,True,False)
         ),
         Cell(
-            Walls(False,False,True,True),
-            150,1,
-            200,50
+            win,
+            Point(150,1),
+            Point(200,50),
+            walls=Walls(False,False,True,True)
         ),
         Cell(
-            Walls(False,True,False,False),
-            200,1,
-            250,50
+            win,
+            Point(200,1),
+            Point(250,50),
+            walls=Walls(False,True,False,False)
         )
     ]
     for cell in cells:
-        win.draw_cell(cell)
+        cell.draw()
     win.wait_for_close()
     
 main()
