@@ -23,6 +23,57 @@ class Line:
             fill=fill_color, 
             width=2
             )
+        
+class Walls:
+    def __init__(self, has_left_wall:bool=True, has_right_wall:bool=True,
+                 has_top_wall:bool=True, has_bottom_wall:bool=True):
+        self.left_wall = has_left_wall
+        self.right_wall = has_right_wall
+        self.top_wall = has_top_wall
+        self.bottom_wall = has_bottom_wall
+    
+class Cell:
+    def __init__(
+        self, walls:Walls,
+        _x1:int,_y1:int,
+        _x2:int,_y2:int,
+    ):
+        self.walls = walls
+        self.x1 = _x1
+        self.x2 = _x2
+        self.y1 = _y1
+        self.y2 = _y2
+        
+    def draw(self, canvas:Canvas, line_color:str):
+        line_width = 2
+        if self.walls.left_wall:
+            canvas.create_line(
+                self.x1,self.y1,
+                self.x1,self.y2, 
+                fill=line_color,
+                width=line_width
+                )
+        if self.walls.right_wall:
+            canvas.create_line(
+                self.x2, self.y1,
+                self.x2, self.y2,
+                fill=line_color,
+                width=line_width
+            )
+        if self.walls.top_wall:
+            canvas.create_line(
+                self.x1, self.y1,
+                self.x2, self.y1,
+                fill=line_color,
+                width=line_width
+            )
+        if self.walls.bottom_wall:
+            canvas.create_line(
+                self.x1, self.y2,
+                self.x2, self.y2,
+                fill=line_color,
+                width=line_width
+            )
 
 class Window:
     def __init__(self, width:int, height:int):
@@ -55,6 +106,9 @@ class Window:
     
     def draw_line(self, line:Line, fill_color:str) -> None:
         line.draw(self.__canvas, fill_color)
+        
+    def draw_cell(self, cell:Cell):
+        cell.draw(self.__canvas, "black")
 
 
 
