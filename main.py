@@ -1,7 +1,15 @@
 from graphics import Window , Point, Line
 from cell import Cell, Walls
+from maze import Maze
 def main():
     win = Window(800,800)
+    maze = Maze(50,50,5,5,50,50,win)
+    maze._break_entrance_and_exit()
+    win.wait_for_close()
+    
+main()
+
+'''
     cells = [
         Cell(
             win,
@@ -38,7 +46,4 @@ def main():
         cell.draw()
     cells[0].draw_move(cells[1])
     cells[3].draw_move(cells[4],True)
-    win.wait_for_close()
-    
-main()
-
+'''

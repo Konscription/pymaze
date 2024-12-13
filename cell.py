@@ -9,29 +9,43 @@ class Walls:
         self.bottom_wall = has_bottom_wall
     
 class Cell:
-    def __init__(self, win, sqp1:Point, sqp2:Point, walls:Walls=Walls()):
+    def __init__(self, sqp1:Point, sqp2:Point, walls:Walls=Walls(), win=None):
         self.walls = walls
         self._sqp1 = sqp1
         self._sqp2 = sqp2
         self._win = win
-        
+    
+    def __repr__(self):
+        return f"({self._sqp1.x},{self._sqp1.y})({self._sqp2.x},{self._sqp2.y}) walls: {self.walls.left_wall}, {self.walls.right_wall}, {self.walls.top_wall}, {self.walls.bottom_wall}"
+    
     def draw(self):
         if self._win is None:
-            return     
+            return
+        left_line = Line(self._sqp1,Point(self._sqp1.x,self._sqp2.y))
+        right_line = Line(Point(self._sqp2.x,self._sqp1.y),self._sqp2)
+        top_line = Line(self._sqp1,Point(self._sqp2.x,self._sqp1.y))
+        bottom_line = Line(Point(self._sqp1.x,self._sqp2.y),self._sqp2)
+        
         if self.walls.left_wall:
-            line = Line(self._sqp1,Point(self._sqp1.x,self._sqp2.y))
-            self._win.draw_line(line)
+            self._win.draw_line(left_line)
+        else:
+            self._win.draw_line(left_line, "white")
         if self.walls.right_wall:
-            line = Line(Point(self._sqp2.x,self._sqp1.y),self._sqp2)
-            self._win.draw_line(line)
+            self._win.draw_line(right_line)
+        else:
+            self._win.draw_line(right_line, "white")
         if self.walls.top_wall:
-            line = Line(self._sqp1,Point(self._sqp2.x,self._sqp1.y))
-            self._win.draw_line(line)
-        if self.walls.bottom_wall:
-            line = Line(Point(self._sqp1.x,self._sqp2.y),self._sqp2)
-            self._win.draw_line(line)
+            self._win.draw_line(top_line)
+        else:
+            self._win.draw_line(top_line, "white")
+        if self.walls.bottom_wall: 
+            self._win.draw_line(bottom_line)
+        else:
+            self._win.draw_line(bottom_line,"white")
 
     def draw_move(self,to_cell, undo=False):
+        if self._win is None:
+            return  
         half_length = abs(self._sqp2.x - self._sqp1.x) // 2
         midpoint = Point(
             self._sqp1.x + half_length, 

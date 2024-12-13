@@ -33,6 +33,8 @@ class Window:
             width (int): width of window in pixels
             height (int): height of window in pixels
         """
+        self._width = width
+        self._height = height
         self.__root = Tk()
         self.__root.title = "Maze Solver"
         self.__canvas = Canvas(self.__root, bg="white", height=height, width=width)
