@@ -9,12 +9,14 @@ class Walls:
         self.bottom_wall = has_bottom_wall
     
 class Cell:
-    def __init__(self, sqp1:Point, sqp2:Point, walls:Walls=Walls(), win=None):
+    def __init__(self, sqp1:Point, sqp2:Point, walls:Walls=Walls(), win=None, grid_loc:Point=None):
         self.walls = walls
         self._sqp1 = sqp1
         self._sqp2 = sqp2
         self._win = win
-    
+        self.visited = False
+        self.grid_loc = grid_loc
+        
     def __repr__(self):
         return f"({self._sqp1.x},{self._sqp1.y})({self._sqp2.x},{self._sqp2.y}) walls: {self.walls.left_wall}, {self.walls.right_wall}, {self.walls.top_wall}, {self.walls.bottom_wall}"
     

@@ -11,7 +11,8 @@ class Maze:
         num_rows, num_cols,
         cell_size_x,
         cell_size_y,
-        win = None
+        win = None,
+        seed = None
     ):
         self._x1 = x1
         self._y1 = y1
@@ -21,6 +22,7 @@ class Maze:
         self.cell_size_y = cell_size_y
         self._win = win
         self._cells = self._create_cells()
+        self.seed = seed
     
     def check_sizes(self) -> bool:
         window_height = self._win._height
@@ -54,7 +56,7 @@ class Maze:
                 bottom_right_x = top_left_x + self.cell_size_x
                 bottom_right_y = top_left_y + self.cell_size_y
                 sqp2 = Point(bottom_right_x, bottom_right_y)
-                columns.append(Cell(sqp1,sqp2,Walls(),win=self._win))
+                columns.append(Cell(sqp1, sqp2, Walls(), win=self._win, grid_loc=Point(x,y)))
                 top_left_y += self.cell_size_y
             top_left_x += self.cell_size_x
             top_left_y = self._y1
@@ -66,20 +68,20 @@ class Maze:
                     self._draw_cell(cell)
         return cells
         
-    def _draw_cell(self, cell:Cell):
+    def _draw_cell(self, cell:Cell) -> None:
         if self._win is None:
             return
         cell.draw()
         #print(f"X: {cell._sqp1.x} Y: {cell._sqp1.y}")
         self._animate()
         
-    def _animate(self):
+    def _animate(self) -> None:
         if self._win is None:
             return
         self._win.redraw()
         time.sleep(0.05)
         
-    def _break_entrance_and_exit(self, seed=None):
+    def _break_entrance_and_exit(self, seed=None) -> None:
         """
         The entrance to the maze will always be at the top of the top-left cell, 
         the exit always at the bottom of the bottom-right cell.
@@ -106,6 +108,56 @@ class Maze:
         self._draw_cell(top_left_cell)
         self._draw_cell(bottom_right_cell)
         
+    def _break_walls_r(self, i, j):
+        current_cell = self._cells[i][j]
+        current_cell.visited = True
         
-        
-        
+        while True:
+            cells_to_visit = []
+            
+            if i - 1 >= 0 and i - 1 < self.num_cols:
+                left_adjacent_cell = self._cells[i-1][j]
+                if not left_adjacent_cell.visited:
+                    cells_to_visit.append(left_adjacent_cell)
+            
+            if i + 1 < self.num_cols:
+                right_adjacent_cell = self._cells[i+1][j]
+                if not right_adjacent_cell.visited:
+                    cells_to_visit.append(right_adjacent_cell)
+            
+            if j - 1 >= 0 and j - 1 < self.num_rows:
+                top_adjacent_cell = self._cells[i][j-1]
+                if not top_adjacent_cell.visited:
+                    cells_to_visit.append(top_adjacent_cell)
+                    
+            if j + 1 < self.num_rows:
+                bottom_adjacent_cell = self._cells[i][j+1]
+                if not bottom_adjacent_cell.visited:
+                    cells_to_visit.append(bottom_adjacent_cell)
+
+            if cells_to_visit == []:
+                current_cell.draw()
+                return
+                
+            next_cell = random.choice(cells_to_visit)
+            
+            i_diff = next_cell.grid_loc.x - current_cell.grid_loc.x
+            j_diff = next_cell.grid_loc.y - current_cell.grid_loc.y
+            
+            if i_diff > 0: #right
+                current_cell.walls.right_wall = False
+                next_cell.walls.left_wall = False
+            if i_diff < 0: #left
+                current_cell.walls.left_wall = False
+                next_cell.walls.right_wall = False
+            if j_diff > 0: #bottom
+                current_cell.walls.bottom_wall = False
+                next_cell.walls.top_wall = False
+            if j_diff < 0: #top
+                current_cell.walls.top_wall = False
+                next_cell.walls.bottom_wall = False
+            
+            current_cell.draw()
+            next_cell.draw()
+            
+            self._break_walls_r(next_cell.grid_loc.x, next_cell.grid_loc.y)
