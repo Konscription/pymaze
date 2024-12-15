@@ -161,3 +161,9 @@ class Maze:
             next_cell.draw()
             
             self._break_walls_r(next_cell.grid_loc.x, next_cell.grid_loc.y)
+            
+    def _reset_cells_visited(self):
+        for columns in self._cells:
+            for cell in columns:
+                cell.visited = False
+            
