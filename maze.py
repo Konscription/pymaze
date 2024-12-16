@@ -22,7 +22,11 @@ class Maze:
         self.cell_size_y = cell_size_y
         self._win = win
         self._cells = self._create_cells()
-        self.seed = seed
+        if seed:
+            random.seed(seed)
+        self._break_entrance_and_exit()
+        self._break_walls_r(0, 0)
+        self._reset_cells_visited()
     
     def check_sizes(self) -> bool:
         window_height = self._win._height
