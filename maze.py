@@ -113,53 +113,39 @@ class Maze:
         current_cell.visited = True
         
         while True:
-            cells_to_visit = []
+            directions = [
+                (-1, 0, 'left_wall', 'right_wall'), 
+                (1, 0, 'right_wall', 'left_wall'),
+                (0, -1, 'top_wall', 'bottom_wall'), 
+                (0, 1, 'bottom_wall', 'top_wall')]
+    
+            # Find unvisited neighboring cells
+            cells_to_visit = [
+                self._cells[i + di][j + dj]
+                for di, dj, curr_wall, adj_wall in directions
+                    if 0 <= i + di < self.num_cols and 0 <= j + dj < self.num_rows and not self._cells[i + di][j + dj].visited
+            ]
             
-            if i - 1 >= 0 and i - 1 < self.num_cols:
-                left_adjacent_cell = self._cells[i-1][j]
-                if not left_adjacent_cell.visited:
-                    cells_to_visit.append(left_adjacent_cell)
-            
-            if i + 1 < self.num_cols:
-                right_adjacent_cell = self._cells[i+1][j]
-                if not right_adjacent_cell.visited:
-                    cells_to_visit.append(right_adjacent_cell)
-            
-            if j - 1 >= 0 and j - 1 < self.num_rows:
-                top_adjacent_cell = self._cells[i][j-1]
-                if not top_adjacent_cell.visited:
-                    cells_to_visit.append(top_adjacent_cell)
-                    
-            if j + 1 < self.num_rows:
-                bottom_adjacent_cell = self._cells[i][j+1]
-                if not bottom_adjacent_cell.visited:
-                    cells_to_visit.append(bottom_adjacent_cell)
-
-            if cells_to_visit == []:
+            # If no cells to visit, finish
+            if not cells_to_visit:
                 current_cell.draw()
                 return
-                
+            
+            # Choose a random neighboring cell to visit
             next_cell = random.choice(cells_to_visit)
+                       
+            # Determine the direction of the move and break the corresponding wall
+            for di, dj, curr_wall, adj_wall in directions:
+                if i + di == next_cell.grid_loc.x and j + dj == next_cell.grid_loc.y:
+                    setattr(current_cell.walls, curr_wall, False)
+                    setattr(next_cell.walls, adj_wall, False)
+                    break
             
-            i_diff = next_cell.grid_loc.x - current_cell.grid_loc.x
-            j_diff = next_cell.grid_loc.y - current_cell.grid_loc.y
-            
-            if i_diff > 0: #right
-                current_cell.walls.right_wall = False
-                next_cell.walls.left_wall = False
-            if i_diff < 0: #left
-                current_cell.walls.left_wall = False
-                next_cell.walls.right_wall = False
-            if j_diff > 0: #bottom
-                current_cell.walls.bottom_wall = False
-                next_cell.walls.top_wall = False
-            if j_diff < 0: #top
-                current_cell.walls.top_wall = False
-                next_cell.walls.bottom_wall = False
-            
+            # Draw the current and next cell
             current_cell.draw()
             next_cell.draw()
             
+            # Recursively break walls in the next cell
             self._break_walls_r(next_cell.grid_loc.x, next_cell.grid_loc.y)
             
     def _reset_cells_visited(self):
