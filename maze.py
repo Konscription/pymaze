@@ -166,4 +166,35 @@ class Maze:
         for columns in self._cells:
             for cell in columns:
                 cell.visited = False
+    
+    def _solve_r(self, i:int, j:int) -> bool:
+        self._animate()
+        
+        current_cell = self._cells[i][j]
+        current_cell.visited = True
+        
+        if current_cell.grid_loc == Point(self.num_cols - 1, self.num_rows -1 ):
+            return True
+        
+        directions = [
+            (-1, 0, 'left_wall'),
+            (1, 0, 'right_wall'),
+            (0, -1, 'top_wall'),
+            (0, 1, 'bottom_wall')]
+        
+        for dir_i, dir_j, wall in directions:
+            ni, nj = i + dir_i, j + dir_j
             
+            if 0 <=ni < self.num_cols and 0 <= nj < self.num_rows:
+                adjacent_cell = self._cells[ni][nj]
+                if not getattr(current_cell.walls, wall) and not adjacent_cell.visited:
+                    current_cell.draw_move(adjacent_cell)
+                    
+                    if self._solve_r(ni, nj):
+                        return True
+                    
+                    current_cell.draw_move(adjacent_cell, True)
+        return False
+
+    def solve(self) -> bool:
+        return self._solve_r(0, 0)

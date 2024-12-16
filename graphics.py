@@ -5,6 +5,12 @@ class Point:
         self.x = x
         self.y = y
         
+    def __eq__(self, other) -> bool:
+        if isinstance(other, Point):
+            return self.x == other.x and self.y == other.y
+        return False
+            
+        
 class Line:
     def __init__(self, point_1:Point, point_2:Point):
         self.point_1 = point_1
